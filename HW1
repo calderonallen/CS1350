@@ -15,32 +15,15 @@ print(contacts)
 
 # === Part B: Access and Modify ===
 print("\n=== Access and Modify ===")
-
-# Print Mom's number
 print("Mom's number:", contacts["Mom"])
-
-# Update Dad's number
 contacts["Dad"] = "555-4321"
-
-# Add Dentist
 contacts["Dentist"] = "555-2222"
-
-# Look up Grandma safely
 grandma = contacts.get("Grandma", "Contact not found")
 print("Looking up Grandma:", grandma)
-
-# Print updated contacts
 print("Updated contacts:", contacts)
-
-# === Part C: Delete and Analyze ===
 print("\n=== Delete and Analyze ===")
-
-# Remove Pizza Place
 del contacts["Pizza Place"]
-
-# Remove Work and save the number
 old_work = contacts.pop("Work")
-
 print(f"Removed work number: {old_work}")
 print(f"Contacts remaining: {len(contacts)}")
 print(f"Contact names: {contacts.keys()}")
@@ -61,8 +44,6 @@ grades = {
     "Ivy": 60,
     "Jack": 83
 }
-
-# === Part A: Basic Statistics ===
 print("\n=== Basic Statistics ===")
 
 print(f"Students: {grades.keys()}")
@@ -75,7 +56,6 @@ print(f"Class average: {average:.2f}")
 print(f"Highest grade: {max(grades.values())}")
 print(f"Lowest grade: {min(grades.values())}")
 
-# === Part B: Iteration and Analysis ===
 print("\n=== Grade Report ===")
 
 def get_letter(score):
@@ -124,9 +104,8 @@ print(f"A grades: {count_a}")
 print(f"B grades: {count_b}")
 print(f"C grades: {count_c}")
 print(f"D grades: {count_d}")
-print(f"F grades: {count_f}")
+print(f"F grades: {count_f}") 
 
-# === Part C: Find Specific Students ===
 print("\n=== Top and Bottom Performers ===")
 
 top_name = ""
