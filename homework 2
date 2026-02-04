@@ -1,0 +1,168 @@
+
+# ==========================================
+# Problem 1: Movie Rating Analyzer
+# ==========================================
+
+ratings = {
+    "Alice": {"Inception": 5, "Titanic": 3, "Avatar": 4, "Jaws": 2},
+    "Bob": {"Inception": 4, "The Matrix": 5, "Avatar": 5, "Jaws": 3},
+    "Carol": {"Titanic": 5, "The Matrix": 4, "Avatar": 3, "Interstellar": 5},
+    "Dave": {"Inception": 3, "Titanic": 4, "The Matrix": 5, "Jaws": 4},
+    "Eve": {"Inception": 5, "Avatar": 4, "Interstellar": 4, "Jaws": 1}
+}
+
+print("=== User Statistics ===")
+for user, movies in ratings.items():
+    num_movies = len(movies)
+    avg_rating = sum(movies.values()) / num_movies
+    favorite = max(movies.items(), key=lambda x: x[1])
+    print(f"{user}: {num_movies} movies, avg rating: {avg_rating:.2f}, favorite: {favorite[0]} ({favorite[1]})")
+
+# ---------- Part B ----------
+movie_stats = {}
+for user, movies in ratings.items():
+    for movie, rating in movies.items():
+        if movie not in movie_stats:
+            movie_stats[movie] = {"ratings": []}
+        movie_stats[movie]["ratings"].append(rating)
+
+for movie, stats in movie_stats.items():
+    stats["avg"] = sum(stats["ratings"]) / len(stats["ratings"])
+    stats["count"] = len(stats["ratings"])
+
+print("\n=== Movie Statistics ===")
+for movie, stats in sorted(movie_stats.items(), key=lambda x: x[1]["avg"], reverse=True):
+    print(f"{movie}: {stats['avg']:.2f} avg ({stats['count']} reviews)")
+
+# ---------- Part C: Recommendations ----------
+top_movies = {m for m, s in movie_stats.items() if s["avg"] >= 4.0}
+alice_rated = set(ratings["Alice"].keys())
+recommendations = top_movies - alice_rated
+
+print("\n=== Recommendations for Alice ===")
+print("Movies with avg >= 4.0:", top_movies)
+print("Alice hasn’t rated:", recommendations)
+
+
+# ==========================================
+# Problem 2: Sales Data Transformer
+# ==========================================
+
+sales_records = [
+    {"product": "Laptop", "category": "Electronics", "price": 999, "quantity": 5, "region": "North"},
+    {"product": "Mouse", "category": "Electronics", "price": 25, "quantity": 50, "region": "North"},
+    {"product": "Desk", "category": "Furniture", "price": 350, "quantity": 8, "region": "South"},
+    {"product": "Chair", "category": "Furniture", "price": 150, "quantity": 20, "region": "South"},
+    {"product": "Laptop", "category": "Electronics", "price": 999, "quantity": 3, "region": "South"},
+    {"product": "Keyboard", "category": "Electronics", "price": 75, "quantity": 30, "region": "North"},
+    {"product": "Desk", "category": "Furniture", "price": 350, "quantity": 5, "region": "North"},
+    {"product": "Monitor", "category": "Electronics", "price": 300, "quantity": 12, "region": "South"},
+]
+
+# ---------- Part A ----------
+product_prices = {r["product"]: r["price"] for r in sales_records}
+expensive_products = {k: v for k, v in product_prices.items() if v > 100}
+price_category = {k: ("Premium" if v >= 300 else "Standard") for k, v in product_prices.items()}
+
+print("\n=== Part A: Comprehensions ===")
+print("Product prices:", product_prices)
+print("Expensive products (>$100):", expensive_products)
+print("Price categories:", price_category)
+
+# ---------- Part B ----------
+total_by_category = {}
+total_by_region = {}
+quantity_by_product = {}
+
+for r in sales_records:
+    revenue = r["price"] * r["quantity"]
+    total_by_category[r["category"]] = total_by_category.get(r["category"], 0) + revenue
+    total_by_region[r["region"]] = total_by_region.get(r["region"], 0) + revenue
+    quantity_by_product[r["product"]] = quantity_by_product.get(r["product"], 0) + r["quantity"]
+
+print("\n=== Part B: Aggregations ===")
+print("Revenue by category:", total_by_category)
+print("Revenue by region:", total_by_region)
+print("Quantity by product:", quantity_by_product)
+
+
+# ==========================================
+# Problem 3: Course Registration System
+# ==========================================
+
+registrations = {
+    "Alice": {"CS101", "CS201", "MATH101"},
+    "Bob": {"CS101", "MATH101", "PHYS101"},
+    "Carol": {"CS201", "CS301", "MATH201"},
+    "Dave": {"CS101", "CS201", "MATH101", "PHYS101"},
+    "Eve": {"CS301", "MATH201", "MATH301"}
+}
+
+prerequisites = {
+    "CS101": set(),
+    "CS201": {"CS101"},
+    "CS301": {"CS201"},
+    "MATH101": set(),
+    "MATH201": {"MATH101"},
+    "MATH301": {"MATH201"},
+    "PHYS101": {"MATH101"}
+}
+
+capacity = {"CS101": 30, "CS201": 25, "CS301": 20,
+             "MATH101": 35, "MATH201": 25, "MATH301": 20, "PHYS101": 30}
+
+# ---------- Part A ----------
+all_courses = set().union(*registrations.values())
+common_courses = set.intersection(*registrations.values())
+other_students_courses = set().union(*(registrations[s] for s in registrations if s != "Alice"))
+alice_only = registrations["Alice"] - other_students_courses
+students_in_cs = {s for s, c in registrations.items() if any(course.startswith("CS") for course in c)}
+
+print("\n=== Part A: Set Operations ===")
+print("All courses with enrollment:", all_courses)
+print("Courses ALL students share:", common_courses)
+print("Courses ONLY Alice takes:", alice_only)
+print("Students in CS courses:", students_in_cs)
+
+# ---------- Part B ----------
+print("\n=== Part B: Prerequisite Check ===")
+for student, courses in registrations.items():
+    missing_info = []
+    for c in courses:
+        needed = prerequisites[c]
+        missing = needed - courses
+        if missing:
+            missing_info.append(f" {c} requires {needed} but missing: {missing}")
+    if not missing_info:
+        print(f"{student}: VALID")
+    else:
+        print(f"{student}: INVALID - Missing prerequisites:")
+        for info in missing_info:
+            print(info)
+
+# ---------- Part C ----------
+overloaded = {s for s, c in registrations.items() if len(c) >= 4}
+math_courses = {course for courses in registrations.values() for course in courses if course.startswith("MATH")}
+
+same_load = []
+students = list(registrations.keys())
+for i in range(len(students)):
+    for j in range(i + 1, len(students)):
+        if registrations[students[i]] == registrations[students[j]]:
+            same_load.append((students[i], students[j]))
+
+enrollment_counts = {}
+for student, courses in registrations.items():
+    for c in courses:
+        enrollment_counts[c] = enrollment_counts.get(c, 0) + 1
+
+under_enrolled = {c for c, n in enrollment_counts.items() if n < 3}
+
+print("\n=== Part C: Enrollment Analysis ===")
+print("Overloaded students (4+ courses):", overloaded)
+print("All MATH courses enrolled:", math_courses)
+print("Students with identical schedules:", same_load if same_load else "None found")
+print("Enrollment per course:")
+for c, count in enrollment_counts.items():
+    print(f" {c}: {count} students")
+print("Under-enrolled courses (<3 students):", under_enrolled)
