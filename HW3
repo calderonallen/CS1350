@@ -1,0 +1,139 @@
+import numpy as np
+
+
+ Problem 1: Array Creation and Basic Operations
+# Part A: Create Arrays
+print("---- Part A ----")
+
+zeros_arr = np.zeros(8)
+print("zeros_arr:", zeros_arr)
+
+ones_matrix = np.ones((3, 4))
+print("ones_matrix:\n", ones_matrix)
+
+range_arr = np.arange(10, 51, 5)
+print("range_arr:", range_arr)
+
+linear_arr = np.linspace(0, 2, 9)
+print("linear_arr:", linear_arr)
+
+# Part B: Basic Operations
+print("\n---- Part B ----")
+
+a = np.array([2, 4, 6, 8, 10])
+b = np.array([1, 2, 3, 4, 5])
+
+print("a + b:", a + b)
+print("a * b:", a * b)
+print("a ** 2:", a ** 2)
+print("a / b:", a / b)
+print("Sum of a:", np.sum(a))
+print("Mean of b:", np.mean(b))
+
+Problem 2: Array Attributes and Statistics
+# Part A: Array Attributes
+print("---- Part A ----")
+
+matrix = np.arange(1, 21).reshape(4, 5)
+
+print("Matrix:\n", matrix)
+print("Shape:", matrix.shape)
+print("Number of dimensions:", matrix.ndim)
+print("Total elements:", matrix.size)
+print("Data type:", matrix.dtype)
+print("Total bytes used:", matrix.nbytes)
+# Part B: Statistics
+print("\n---- Part B ----")
+
+print("Overall mean:", np.mean(matrix))
+print("Overall standard deviation:", np.std(matrix))
+print("Minimum value:", np.min(matrix))
+print("Maximum value:", np.max(matrix))
+
+print("Sum of each row:", np.sum(matrix, axis=1))
+print("Mean of each column:", np.mean(matrix, axis=0))
+
+print("Index of max (flattened):", np.argmax(matrix))
+
+ Problem 3: Indexing and Boolean Selection
+scores = np.array([
+    [85, 90, 78, 92],   # Alice
+    [70, 65, 72, 68],   # Bob
+    [95, 98, 94, 97],   # Carol
+    [60, 55, 58, 62],   # Dave
+    [88, 85, 90, 87],   # Eve
+    [75, 80, 77, 82]    # Frank
+])
+
+students = ['Alice', 'Bob', 'Carol', 'Dave', 'Eve', 'Frank']
+exams = ['Exam1', 'Exam2', 'Exam3', 'Exam4']
+# Part A: Basic Indexing
+print("---- Part A ----")
+
+print("Carol Exam2 score:", scores[2, 1])
+print("Alice scores:", scores[0])
+print("All Exam3 scores:", scores[:, 2])
+print("Bob & Carol (Exam1 & Exam2):\n", scores[1:3, 0:2])
+
+# Part B: Boolean Selection
+print("\n---- Part B ----")
+
+mask = scores >= 90
+print("Boolean mask (>=90):\n", mask)
+
+print("Scores >= 90:", scores[mask])
+print("Count >= 90:", np.sum(mask))
+
+# Students with average >= 85
+averages = np.mean(scores, axis=1)
+high_students = [students[i] for i in range(len(students)) if averages[i] >= 85]
+print("Students with average >= 85:", high_students)
+
+# Replace failing scores (<60) with 60
+scores_modified = scores.copy()
+scores_modified[scores_modified < 60] = 60
+print("Modified scores:\n", scores_modified)
+
+Problem 4: Reshaping and Broadcasting
+# Part A: Reshaping
+print("---- Part A ----")
+
+arr1d = np.arange(1, 25)
+print("1D array:", arr1d)
+
+matrix_4x6 = arr1d.reshape(4, 6)
+print("4x6 matrix:\n", matrix_4x6)
+
+array_3d = arr1d.reshape(2, 3, 4)
+print("2x3x4 3D array:\n", array_3d)
+
+flattened = array_3d.flatten()
+print("Flattened array:", flattened)
+
+# Part B: Broadcasting
+print("\n---- Part B ----")
+
+prices = np.array([
+    [1.20, 1.50, 1.30, 1.40],  # Apple
+    [0.50, 0.60, 0.55, 0.45],  # Banana
+    [0.80, 0.90, 0.85, 0.75]   # Orange
+])
+
+# 1. 10% discount
+discounted = prices * 0.9
+print("After 10% discount:\n", discounted)
+
+# 2. Add $0.10 delivery fee to each store
+delivery_fee = np.array([0.10, 0.10, 0.10, 0.10])
+with_delivery = prices + delivery_fee
+print("After delivery fee:\n", with_delivery)
+
+# 3. Apply store tax rates
+tax_rates = np.array([0.08, 0.06, 0.07, 0.05])
+final_prices = prices * (1 + tax_rates)
+print("Final prices with tax:\n", final_prices)
+
+# 4. Normalize by subtracting row mean
+row_means = np.mean(prices, axis=1, keepdims=True)
+normalized = prices - row_means
+print("Normalized prices:\n", normalized)
