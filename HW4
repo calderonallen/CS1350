@@ -1,0 +1,142 @@
+problem 1 part A: book class
+class Book:
+    def __init__(self, title, author, total_pages, isbn):
+        self.title = title
+        self.author = author
+        self.total_pages = total_pages
+        self.isbn = isbn
+        self._current_page = 0  # start at page 0
+
+    @property
+    def current_page(self):
+        return self._current_page
+
+    @property
+    def progress(self):
+        percent = (self._current_page / self.total_pages) * 100
+        return f"{percent:.1f}%"
+
+    def read(self, pages):
+        if pages <= 0:
+            print("Error: pages must be positive")
+            return self._current_page
+
+        self._current_page += pages
+
+        if self._current_page > self.total_pages:
+            self._current_page = self.total_pages
+
+        return self._current_page
+
+    def reset(self):
+        self._current_page = 0
+
+    def __str__(self):
+        return f"'{self.title}' by {self.author} (ISBN: {self.isbn}) - Page {self._current_page}/{self.total_pages}"
+problem 1 part B: textbook class
+class TextBook(Book):
+    def __init__(self, title, author, total_pages, isbn, subject, edition):
+        super().__init__(title, author, total_pages, isbn)
+        self.subject = subject
+        self.edition = edition
+        self._highlights = {}
+
+    def highlight(self, page, text):
+        if page < 1 or page > self.total_pages:
+            print("Error: page number out of range")
+            return
+
+        if page not in self._highlights:
+            self._highlights[page] = []
+
+        self._highlights[page].append(text)
+
+    def get_highlights(self, page):
+        return self._highlights.get(page, [])
+
+    def __str__(self):
+        return f"'{self.title}' by {self.author} (Edition {self.edition}, {self.subject}) - Page {self._current_page}/{self.total_pages}"
+bonus: 
+problem 2 fitness tracker
+part A: workout class
+class Workout:
+    def __init__(self, name, duration_minutes, date):
+        self.name = name
+        self._duration_minutes = 0
+        self.duration_minutes = duration_minutes
+        self.date = date
+
+    @property
+    def duration_minutes(self):
+        return self._duration_minutes
+
+    @duration_minutes.setter
+    def duration_minutes(self, value):
+        if value > 0:
+            self._duration_minutes = value
+        else:
+            print("Error: duration must be positive")
+
+    def calories_burned(self):
+        return 0
+
+    def __str__(self):
+        return f"{self.name} - {self._duration_minutes}min on {self.date} ({self.calories_burned():.0f} cal)"
+part B: cardioworkout
+class CardioWorkout(Workout):
+    def __init__(self, name, duration_minutes, date, avg_heart_rate):
+        super().__init__(name, duration_minutes, date)
+        self.avg_heart_rate = avg_heart_rate
+
+    def calories_burned(self):
+        return self.duration_minutes * (self.avg_heart_rate / 100) * 5
+
+    @property
+    def intensity(self):
+        if self.avg_heart_rate >= 150:
+            return "High"
+        elif self.avg_heart_rate >= 120:
+            return "Moderate"
+        else:
+            return "Low"
+part B: strengthworkout
+class StrengthWorkout(Workout):
+    def __init__(self, name, duration_minutes, date, sets, reps_per_set, weight_lbs):
+        super().__init__(name, duration_minutes, date)
+        self.sets = sets
+        self.reps_per_set = reps_per_set
+        self.weight_lbs = weight_lbs
+
+    def calories_burned(self):
+        return self.sets * self.reps_per_set * (self.weight_lbs / 100) * 3
+
+    @property
+    def total_volume(self):
+        return self.sets * self.reps_per_set * self.weight_lbs
+part C: Weeklylog class
+class WeeklyLog:
+    def __init__(self, week_label):
+        self.week_label = week_label
+        self._workouts = []
+
+    def add_workout(self, workout):
+        self._workouts.append(workout)
+
+    @property
+    def total_minutes(self):
+        return sum(w.duration_minutes for w in self._workouts)
+
+    @property
+    def total_calories(self):
+        return sum(w.calories_burned() for w in self._workouts)
+
+    def summary(self):
+        print(f"--- {self.week_label} ---")
+        for w in self._workouts:
+            print(f"  {w}")
+        print(f"Totals: {self.total_minutes} min, {self.total_calories:.0f} cal")
+
+    def hardest_workout(self):
+        if not self._workouts:
+            return None
+        return max(self._workouts, key=lambda w: w.calories_burned())
