@@ -1,1 +1,143 @@
+### Problem 2: Tournament Bracket (Sets)
+class Team:
+    def __init__(self, name, players=None):
+        self.name = name
+        if players is None:
+            self.players = set()
+        else:
+            self.players = set(players)
+
+    def add_player(self, name):
+        self.players.add(name)
+
+    def remove_player(self, name):
+        self.players.discard(name)  # discard avoids error if player not present
+
+    def roster_size(self):
+        return len(self.players)
+
+
+def shared_players(team1, team2):
+    return team1.players.intersection(team2.players)
+
+
+def all_players(teams):
+    all_set = set()
+    for team in teams:
+        all_set |= team.players
+    return all_set
+
+
+def find_duplicates(teams):
+    player_teams = {}
+
+    for team in teams:
+        for player in team.players:
+            if player not in player_teams:
+                player_teams[player] = []
+            player_teams[player].append(team.name)
+
+    duplicates = {}
+    for player, team_list in player_teams.items():
+        if len(team_list) > 1:
+            duplicates[player] = sorted(team_list)
+
+    return duplicates
+
+
+def eligible_allstars(teams, min_teams):
+    player_count = {}
+
+    for team in teams:
+        for player in team.players:
+            if player not in player_count:
+                player_count[player] = set()
+            player_count[player].add(team.name)
+
+    result = set()
+    for player, team_set in player_count.items():
+        if len(team_set) >= min_teams:
+            result.add(player)
+
+    return result
+
+
+# Test cases
+alpha = Team("Alpha", {"Alice", "Bob", "Carol"})
+beta = Team("Beta", {"Carol", "Dave", "Eve"})
+gamma = Team("Gamma", {"Eve", "Frank", "Carol"})
+
+print(f"Alpha roster: {alpha.roster_size()}")  # 3
+
+print(shared_players(alpha, beta))  # {'Carol'}
+print(all_players([alpha, beta, gamma]))
+# {'Alice', 'Bob', 'Carol', 'Dave', 'Eve', 'Frank'}
+
+dupes = find_duplicates([alpha, beta, gamma])
+print(dupes)
+# {'Carol': ['Alpha', 'Beta', 'Gamma'], 'Eve': ['Beta', 'Gamma']}
+
+print(eligible_allstars([alpha, beta, gamma], 2))
+# {'Carol', 'Eve'}
+
+print(eligible_allstars([alpha, beta, gamma], 3))
+# {'Carol'}
+problem 3
+import numpy as np
+
+
+def clamp(arr):
+    return np.clip(arr, 0, 255)
+
+
+def brightness(img, amount):
+    return clamp(img + amount)
+
+
+def contrast(img, factor):
+    adjusted = (img - 128) * factor + 128
+    return clamp(adjusted)
+
+
+def threshold(img, cutoff):
+    result = np.where(img >= cutoff, 255, 0)
+    return result
+
+
+def crop(img, top, left, height, width):
+    return img[top:top+height, left:left+width]
+
+
+def statistics(img):
+    stats = {}
+
+    stats["mean"] = np.mean(img)
+    stats["std"] = np.std(img)
+    stats["min"] = np.min(img)
+    stats["max"] = np.max(img)
+
+    bright_pixels = np.sum(img > 200)
+    total_pixels = img.size
+    stats["bright_pct"] = (bright_pixels / total_pixels) * 100
+
+    return stats
+
+
+# Example test image
+np.random.seed(42)
+img = np.random.randit(0,256, size=(6, 8)).astype(np.uint8)
+
+print("Brightness +50")
+print(brightness(img, 50))
+
+print("Threshold 128")
+print(threshold(img, 128))
+
+print("Crop")
+print(crop(img, 1, 2, 3, 4))
+
+print("Statistics")
+print(statistics(img))
+
+
 
