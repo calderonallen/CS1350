@@ -1,0 +1,269 @@
+from abc import ABC, abstractmethod
+
+
+# Problem 1: Employee Payroll System
+
+class Employee(ABC):
+    def __init__(self, name, employee_id):
+        self.name = name
+        self.employee_id = employee_id
+
+    @abstractmethod
+    def calculate_pay(self):
+        pass
+
+    @abstractmethod
+    def description(self):
+        pass
+
+    def pay_stub(self):
+        pay = self.calculate_pay()
+        return f"{self.name} (ID: {self.employee_id}): ${pay:.2f}"
+
+    @staticmethod
+    def validate_positive(value, name):
+        if value <= 0:
+            raise ValueError(f"{name} must be positive!")
+        return True
+
+
+class SalariedEmployee(Employee):
+    def __init__(self, name, employee_id, annual_salary):
+        super().__init__(name, employee_id)
+        Employee.validate_positive(annual_salary, "annual_salary")
+        self.annual_salary = annual_salary
+
+    def calculate_pay(self):
+        return self.annual_salary / 24
+
+    def description(self):
+        return f"Salaried: {self.name}"
+
+
+class HourlyEmployee(Employee):
+    def __init__(self, name, employee_id, hourly_rate, hours_worked):
+        super().__init__(name, employee_id)
+        Employee.validate_positive(hourly_rate, "hourly_rate")
+        Employee.validate_positive(hours_worked, "hours_worked")
+        self.hourly_rate = hourly_rate
+        self.hours_worked = hours_worked
+
+    def calculate_pay(self):
+        if self.hours_worked <= 40:
+            return self.hourly_rate * self.hours_worked
+        overtime = self.hours_worked - 40
+        return (40 * self.hourly_rate) + (overtime * self.hourly_rate * 1.5)
+
+    def description(self):
+        return f"Hourly: {self.name}"
+
+
+class CommissionEmployee(Employee):
+    def __init__(self, name, employee_id, base_salary, sales, commission_rate):
+        super().__init__(name, employee_id)
+
+        Employee.validate_positive(base_salary, "base_salary")
+        Employee.validate_positive(sales, "sales")
+        Employee.validate_positive(commission_rate, "commission_rate")
+
+        if commission_rate > 1.0:
+            raise ValueError("commission_rate must be positive!")
+
+        self.base_salary = base_salary
+        self.sales = sales
+        self.commission_rate = commission_rate
+
+    def calculate_pay(self):
+        return self.base_salary + (self.sales * self.commission_rate)
+
+    def description(self):
+        return f"Commission: {self.name}"
+
+
+class Payroll:
+    def __init__(self):
+        self.employees = []
+
+    def add_employee(self, employee):
+        self.employees.append(employee)
+
+    def total_payroll(self):
+        return sum(emp.calculate_pay() for emp in self.employees)
+
+    def print_all_stubs(self):
+        for emp in self.employees:
+            print(emp.pay_stub())
+
+
+
+# Problem 2: Music Library
+
+class Song:
+    total_songs = 0
+
+    def __init__(self, title, artist, duration_seconds):
+        self.title = title
+        self.artist = artist
+        self.duration_seconds = duration_seconds
+        Song.total_songs += 1
+
+    def display(self):
+        return f"{self.title} - {self.artist} ({self.format_duration(self.duration_seconds)})"
+
+    @classmethod
+    def from_string(cls, s):
+        title, artist, duration = s.split(" | ")
+        seconds = cls.parse_duration(duration)
+        return cls(title, artist, seconds)
+
+    @classmethod
+    def get_total_songs(cls):
+        return cls.total_songs
+
+    @staticmethod
+    def format_duration(seconds):
+        minutes = seconds // 60
+        sec = seconds % 60
+        return f"{minutes}:{sec:02}"
+
+    @staticmethod
+    def parse_duration(duration_str):
+        minutes, seconds = duration_str.split(":")
+        return int(minutes) * 60 + int(seconds)
+
+
+class Playlist:
+    total_playlists = 0
+
+    def __init__(self, name):
+        Playlist.total_playlists += 1
+        self.playlist_id = f"PL_{Playlist.total_playlists:03}"
+        self.name = name
+        self.songs = []
+
+    def add_song(self, song):
+        self.songs.append(song)
+
+    def total_duration(self):
+        return sum(song.duration_seconds for song in self.songs)
+
+    def display(self):
+        duration = Song.format_duration(self.total_duration())
+        return f"Playlist: {self.name} ({len(self.songs)} songs, {duration})"
+
+    @classmethod
+    def get_total_playlists(cls):
+        return cls.total_playlists
+
+
+class LibraryManager:
+
+    @staticmethod
+    def create_playlist_from_strings(name, song_strings):
+        playlist = Playlist(name)
+
+        for s in song_strings:
+            song = Song.from_string(s)
+            playlist.add_song(song)
+
+        return playlist
+
+    @staticmethod
+    def format_library_report(playlists):
+        report = "=== LIBRARY REPORT ===\n"
+
+        for playlist in playlists:
+            report += f"Playlist: {playlist.name}\n"
+
+            for i, song in enumerate(playlist.songs, start=1):
+                report += f"  {i}. {song.display()}\n"
+
+            duration = Song.format_duration(playlist.total_duration())
+            report += f"  Duration: {duration}\n\n"
+
+        report += f"Total Songs: {Song.get_total_songs()}\n"
+        report += "======================"
+
+        return report
+
+
+# Problem 3: Smart GradeBook
+
+class GradeBook:
+
+    def __init__(self, course_name):
+        self.course_name = course_name
+        self.grades = {}
+
+    def __str__(self):
+        return f"GradeBook: {self.course_name} ({len(self.grades)} students)"
+
+    def __repr__(self):
+        return f"GradeBook('{self.course_name}')"
+
+    def __len__(self):
+        return len(self.grades)
+
+    def __getitem__(self, student):
+        if student not in self.grades:
+            raise KeyError(student)
+        return self.grades[student]
+
+    def __setitem__(self, student, grade):
+        if grade < 0 or grade > 100:
+            raise ValueError("Grade must be between 0 and 100")
+        self.grades[student] = grade
+
+    def __contains__(self, student):
+        return student in self.grades
+
+    def __iter__(self):
+        return iter(self.grades)
+
+    def __bool__(self):
+        return len(self.grades) > 0
+
+    @property
+    def average(self):
+        if not self.grades:
+            return 0.0
+        return sum(self.grades.values()) / len(self.grades)
+
+    def __add__(self, other):
+        new = GradeBook(f"{self.course_name} + {other.course_name}")
+
+        for s, g in self.grades.items():
+            new.grades[s] = g
+
+        for s, g in other.grades.items():
+            if s in new.grades:
+                new.grades[s] = max(new.grades[s], g)
+            else:
+                new.grades[s] = g
+
+        return new
+
+    def __iadd__(self, other):
+        for s, g in other.grades.items():
+            if s in self.grades:
+                self.grades[s] = max(self.grades[s], g)
+            else:
+                self.grades[s] = g
+        return self
+
+    def __mul__(self, factor):
+        new = GradeBook(f"{self.course_name} (curved)")
+
+        for s, g in self.grades.items():
+            new.grades[s] = min(g * factor, 100)
+
+        return new
+
+    def __eq__(self, other):
+        return abs(self.average - other.average) <= 0.01
+
+    def __lt__(self, other):
+        return self.average < other.average
+
+    def __le__(self, other):
+        return self.average <= other.average
