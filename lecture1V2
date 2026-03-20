@@ -1,1 +1,236 @@
 
+# Beginner — Clean a Contact Card
+
+def clean_contact():
+    name = "   jOhN sMiTh   "
+    email = "  JOHN@Email.COM  "
+    phone = "  555-123-4567  "
+
+    # Strip whitespace and format
+    clean_name = name.strip().title()
+    clean_email = email.strip().lower()
+    clean_phone = phone.strip()
+
+    print(f"Name:  {clean_name}")
+    print(f"Email: {clean_email}")
+    print(f"Phone: {clean_phone}")
+
+clean_contact()
+
+# Intermediate — Input Validator
+
+def validate_username(username):
+    """
+    A valid username:
+      - no leading/trailing spaces (after stripping)
+      - length 3–16
+      - letters, digits, underscores only
+    """
+    cleaned = username.strip()
+
+    if len(cleaned) < 3 or len(cleaned) > 16:
+        return False, "Length must be between 3 and 16"
+
+    for char in cleaned:
+        if not (char.isalnum() or char == "_"):
+            return False, "Invalid character found"
+
+    return True, "Valid"
+
+
+tests = ["  ab  ", "alice_01", "TOOLONGUSERNAMEXX", "ok!", "bob"]
+
+for t in tests:
+    valid, reason = validate_username(t)
+    print(f"'{t}' -> {valid} ({reason})")
+
+# Advanced — Data Cleaning Pipeline
+
+def clean_csv_records(raw_lines):
+    results = []
+
+    for line in raw_lines:
+        fields = line.split(",")
+
+        if len(fields) != 3:
+            continue
+
+        name = fields[0].strip().title()
+        email = fields[1].strip().lower()
+        age_str = fields[2].strip()
+
+        if not age_str.isdigit():
+            continue
+
+        age = int(age_str)
+
+        results.append({
+            "name": name,
+            "email": email,
+            "age": age
+        })
+
+    return results
+
+
+raw = [
+    "  JANE DOE , Jane@Email.COM , 25 ",
+    "  bob smith , BOB@SITE.ORG , thirty ",
+    "  CAROL WHITE , carol@test.io , 40 "
+]
+
+for record in clean_csv_records(raw):
+    print(record)
+
+# Beginner — Split and Join
+
+csv_line = "Alice,Smith,28,Teacher"
+
+fields = csv_line.split(",")
+
+formatted = f"{fields[0]} {fields[1]} ({fields[2]}) - {fields[3]}"
+
+rejoined = " | ".join(fields)
+
+print(f"Fields:    {fields}")
+print(f"Formatted: {formatted}")
+print(f"Rejoined:  {rejoined}")
+
+
+# Intermediate — Grade Report Table
+
+students = [
+    ("Alice", 92.5, "A"),
+    ("Bob", 78.3, "C+"),
+    ("Charlie", 85.7, "B"),
+]
+
+print(f"{'Name':<12}{'Score':>8}{'Grade':>6}")
+print("-" * 26)
+
+total = 0
+
+for name, score, grade in students:
+    print(f"{name:<12}{score:>8.1f}{grade:>6}")
+    total += score
+
+average = total / len(students)
+
+print("-" * 26)
+print(f"{'Average':<12}{average:>8.2f}")
+
+
+
+# Advanced — Phone Number Formatter
+
+def format_phone(raw):
+    digits = "".join(c for c in raw if c.isdigit())
+
+    if len(digits) == 11 and digits.startswith("1"):
+        digits = digits[1:]
+
+    if len(digits) != 10:
+        return None
+
+    area_code = digits[0:3]
+    prefix = digits[3:6]
+    line = digits[6:10]
+
+    return f"({area_code}) {prefix}-{line}"
+
+
+tests = ["555-123-4567", "(800) 555-1234", "15551234567", "12-34"]
+
+for t in tests:
+    print(f"'{t}' -> {format_phone(t)}")
+
+
+
+# Regex Beginner — Search for Patterns
+
+import re
+
+text = "My student ID is s12345 and my room is B204"
+
+match = re.search(r"\d", text)
+
+if match:
+    print(f"First digit: {match.group()}")
+    print(f"Found at position: {match.start()}")
+
+match2 = re.search(r"[A-Z]\d", text)
+
+if match2:
+    print(f"Letter-digit pair: {match2.group()}")
+    print(f"Span: {match2.span()}")
+
+match3 = re.search(r"s\d{5}", text)
+
+if match3:
+    print(f"Student ID: {match3.group()}")
+
+
+
+# Regex Intermediate — Character Type Detective
+
+samples = [
+    "Room A3 is open",
+    "Call 5551234 now",
+    "hello world",
+    "ERROR: code 42",
+]
+
+for text in samples:
+
+    print(f"\nAnalyzing: '{text}'")
+
+    upper_digit = re.search(r"[A-Z]\d", text)
+
+    if upper_digit:
+        print(f"  Upper+digit pair: '{upper_digit.group()}' at {upper_digit.span()}")
+
+    digit_lower = re.search(r"\d[a-z]", text)
+
+    if digit_lower:
+        print(f"  Digit+lower pair: '{digit_lower.group()}' at {digit_lower.span()}")
+
+    space_nonspace = re.search(r"\s\S", text)
+
+    if space_nonspace:
+        print(f"  Space boundary at position: {space_nonspace.start()}")
+
+    special = re.search(r"[^a-zA-Z0-9\s]", text)
+
+    if special:
+        print(f"  Special char: '{special.group()}' at {special.start()}")
+    else:
+        print("  No special characters found")
+
+
+# Regex Advanced — Date Stamp Finder
+
+log_lines = [
+    "2026-03-10 INFO  Server started on port 8080",
+    "2026-03-10 ERROR Connection refused",
+    "no date here, just a message",
+    "2026-03-11 WARN  Memory usage high",
+]
+
+for line in log_lines:
+
+    date_match = re.search(r"\d{4}-\d{2}-\d{2}", line)
+
+    is_error = re.search(r"ERROR", line)
+
+    port_match = re.search(r"\b\d{4}\b", line)
+
+    if date_match:
+        date_str = date_match.group()
+        rest = line[date_match.end():]
+        status = "ERROR" if is_error else "ok   "
+        port = port_match.group().strip() if port_match else "n/a"
+
+        print(f"[{date_str}] {status} | port: {port} | {rest.strip()}")
+
+    else:
+        print(f"[no date   ] skipped | {line}")
