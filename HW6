@@ -1,1 +1,147 @@
+import re
+
+texts = [
+    "Alice is 20 years old",
+    "Bob is 22 years old",
+    "Charlie is 19 years old",
+]
+
+for text in texts:
+    # Use two capturing groups to extract name and age
+    match = re.search(r"(\w+) is (\d+) years old", text)
+
+    if match:
+        name = match.group(1)
+        age = match.group(2)
+        print(f"Name: {name}, Age: {age}")
+import re
+
+dates = ["03-15-2026", "12-25-2025", "01-01-2000"]
+
+for date in dates:
+    # Pattern with named groups
+    match = re.search(r"(?P<month>\d{2})-(?P<day>\d{2})-(?P<year>\d{4})", date)
+
+    if match:
+        info = match.groupdict()
+        print(f"{info['month']}/{info['day']}/{info['year']p}")io
+import re
+
+log_entries = [
+    "[2026-03-10 14:30:45] Server started",
+    "[2026-03-10 09:15:02] User login",
+    "[2026-03-11 22:00:00] Backup complete",
+]
+
+for entry in log_entries:
+    pattern = r"\[(?P<date>\d{4}-\d{2}-\d{2}) (?P<time>\d{2}:\d{2}:\d{2})\] (?P<message>.+)"
+
+    match = re.search(pattern, entry)
+
+    if match:
+        d = match.groupdict()
+        print(f"Date: {d['date']}, Time: {d['time']}, Message: {d['message']}")
+import re
+
+text = "The price is $49.99 today"
+match = re.search(r"\$\d+\.\d{2}", text)
+
+if match:
+    # Print matched text
+    print(f"Price: {match.group()}")
+
+    # Start and end positions
+    print(f"Start: {match.start()}, End: {match.end()}")
+
+    # Extract before and after
+    start, end = match.span()
+    before = text[:start]
+    after = text[end:]
+
+    print(f"Before: '{before}'")
+    print(f"After: '{after}'")
+
+import re
+
+sentences = [
+    "This is is a problem",
+    "The the cat sat down",
+    "No duplicates here",
+    "I really really like Python",
+]
+
+for sentence in sentences:
+    match = re.search(r"\b(\w+)\s+\1\b", sentence)
+
+    if match:
+        print(f"Duplicate '{match.group(1)}' in: {sentence}")
+    else:
+        print(f"No duplicates in: {sentence}")
+import re
+
+records = [
+    "Name: Alice Smith | ID: EMP-001 | Dept: Engineering",
+    "Name: Bob Jones | ID: EMP-042 | Dept: Marketing",
+    "Name: Carol White | ID: EMP-108 | Dept: Sales",
+]
+
+pattern = r"Name: (?P<name>.+?) \| ID: (?P<id>EMP-\d+) \| Dept: (?P<dept>.+)"
+
+for record in records:
+    match = re.search(pattern, record)
+
+    if match:
+        d = match.groupdict()
+
+        print(f"Name: {d['name']}")
+        print(f"ID: {d['id']}")
+        print(f"Department: {d['dept']}")
+
+        id_span = match.span("id")
+        print(f"ID position: {id_span}")
+        print()
+
+import re
+
+texts = [
+    "Hello there!",
+    "Hi everyone.",
+    "Hey you!",
+    "Goodbye now.",
+    "Howdy partner!"
+]
+
+for text in texts:
+    match = re.search(r"^(Hello|Hi|Hey)", text)
+
+    if match:
+        print(f"Greeting found: '{match.group(1)}' in '{text}'")
+    else:
+        print(f"No greeting in: '{text}'")
+import re
+
+files = [
+    "report.pdf", "photo.jpg", "data.csv",
+    "script.py", "style.css", "page.html",
+    "notes.txt", "image.png", "app.js"
+]
+
+for f in files:
+    lower_f = f.lower()
+
+    is_doc = re.search(r"\.(pdf|doc|txt|csv)$", lower_f)
+    is_img = re.search(r"\.(jpg|jpeg|png|gif)$", lower_f)
+    is_code = re.search(r"\.(py|js|html|css)$", lower_f)
+
+    if is_doc:
+        category = f"Document ({is_doc.group(1)})"
+    elif is_img:
+        category = f"Image ({is_img.group(1)})"
+    elif is_code:
+        category = f"Code ({is_code.group(1)})"
+    else:
+        category = "Other"
+
+    print(f"{f:<15} → {category}")
+
 
