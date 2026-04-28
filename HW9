@@ -1,1 +1,91 @@
+def sum_natural(n):
+    if n <= 1:   # Base case
+        return n
+    return n + sum_natural(n - 1)
+def count_digits(n):
+    if n < 10:   # Base case (single digit)
+        return 1
+    return 1 + count_digits(n // 10)
+def is_palindrome(s):
+    import re
+    s = re.sub(r'[^a-zA-Z0-9]', '', s).lower()
+
+    if len(s) <= 1:   # Base case
+        return True
+    if s[0] != s[-1]:
+        return False
+    return is_palindrome(s[1:-1])
+def power(x, n):
+    if n == 0:   # Base case
+        return 1
+    return x * power(x, n - 1)
+def generate_binary_strings(n):
+    result = []
+
+    def helper(current):
+        if len(current) == n:
+            result.append(current)
+            return
+        helper(current + '0')
+        helper(current + '1')
+
+    helper("")
+    return result
+def binary_search(arr, target, left, right):
+    if left > right:
+        return -1
+
+    mid = (left + right) // 2
+
+    if arr[mid] == target:
+        return mid
+    elif arr[mid] > target:
+        return binary_search(arr, target, left, mid - 1)
+    else:
+  return binary_search(arr, target, mid + 1, oo
+
+def binary_search(arr, target, left, right):
+    if left > right:
+        return -1
+
+    mid = (left + right) // 2
+
+    if arr[mid] == target:
+        return mid
+    elif arr[mid] > target:
+        return binary_search(arr, target, left, mid - 1)
+    else:
+        return binary_search(arr, target, mid + 1, right)
+question 2:import random
+
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+
+    return merge(left, right)
+
+def merge(left, right):
+    result = []
+    i = j = 0
+
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result
+
+# Generate 1,000,000 random integers
+arr = [random.randint(1, 1000000) for _ in range(1000000)]
+
+sorted_arr = merge_sort(arr)
 
